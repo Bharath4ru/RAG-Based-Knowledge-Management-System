@@ -1,13 +1,14 @@
-werkzeug==3.0.1  # Updated to match Flask 3.0.0
-python-dotenv==0.19.0
-chromadb==0.4.22
-pypdf==3.9.0
-tiktoken==0.5.1
-unstructured==0.10.30
-groq==0.5.0
-boto3==1.34.18
-langchain==0.1.15
-langchain-core==0.1.41
-langchain-community==0.0.32
-flask==3.0.0
-pydantic==2.6.4
+werkzeug  
+python-dotenv
+chromadb
+pypdf
+tiktoken
+unstructured
+groq
+boto3
+langchain
+langchain-core
+langchain-community
+flask
+pydantic
+langchain-google-genai
