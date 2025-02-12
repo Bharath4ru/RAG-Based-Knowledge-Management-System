@@ -5,11 +5,10 @@ pypdf==3.9.0
 tiktoken==0.5.1
 unstructured==0.10.30
 google-generativeai==0.8.4
-langchain-google-genai==2.0.8  # Downgraded to be compatible
+langchain-google-genai==2.0.8
 groq==0.5.0
 boto3==1.34.18
-langchain==0.1.13  # Compatible with langchain-core 0.1.x
-langchain-community==0.0.31  # Compatible with langchain 0.1.13
-langchain-core==0.1.41  # Explicitly set to match langchain
+langchain==0.1.13
+langchain-community==0.0.31
 flask==3.0.0
-pydantic==2.6.4  # Required by multiple dependencies
+pydantic==2.6.4
