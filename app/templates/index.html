@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knowledge Base Chat</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="logo-container">
+                <div class="chatbot-logo">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="header-text">
+                    <h1>Chat with Knowledge Base</h1>
+                    <span class="status"><i class="fas fa-circle"></i> Active</span>
+                </div>
+            </div>
+            <button class="minimize-button">
+                <i class="fas fa-minus"></i>
+            </button>
+        </div>
+
+        <div class="chat-messages" id="chat-messages">
+            <!-- Messages will appear here -->
+        </div>
+
+        <div class="input-section">
+            <div class="input-container">
+                <button class="attachment-button">
+                    <i class="fas fa-paperclip"></i>
+                    <input type="file" id="file-input" multiple class="file-input">
+                </button>
+                
+                <div class="message-input-container">
+                    <input type="text" id="message-input" placeholder="Type your message here..." class="message-input">
+                    <button id="send-button" class="send-button">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('file-input').addEventListener('change', async (e) => {
+            const formData = new FormData();
+            const files = e.target.files;
+            
+            for (let file of files) {
+                formData.append('file', file);
+            }
+            
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                addMessage('user', `📎 Uploaded: ${Array.from(files).map(f => f.name).join(', ')}`);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+        document.getElementById('send-button').addEventListener('click', sendMessage);
+        document.getElementById('message-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        function addMessage(type, content) {
+            const messagesDiv = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}-message`;
+            
+            const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const timestampSpan = document.createElement('span');
+            timestampSpan.className = 'message-timestamp';
+            timestampSpan.textContent = timestamp;
+
+            const contentSpan = document.createElement('span');
+            contentSpan.className = 'message-content';
+            contentSpan.textContent = content;
+
+            messageDiv.appendChild(contentSpan);
+            messageDiv.appendChild(timestampSpan);
+            
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('message-input');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            addMessage('user', message);
+            input.value = '';
+            
+            try {
+                const response = await fetch('/query', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ question: message })
+                });
+                const result = await response.json();
+                addMessage('bot', result.response || result.error);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        // Add initial message
+        addMessage('bot', 'Hello! How can I help you today?');
+    </script>
+</body>
+</html>
