@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Knowledge Assistant</title>
+  <link rel="stylesheet" href="static\style.css" />
+  <meta name="description" content="AI Knowledge Assistant" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+
+<body>
+  <div class="background">
+    <!-- Background Elements -->
+    <div class="circle-glow blue-glow"></div>
+    <div class="circle-glow purple-glow"></div>
+    <div class="circle-glow cyan-glow"></div>
+    
+    <!-- Robot Elements -->
+    <div class="robot-head top-left"></div>
+    <div class="robot-head bottom-right"></div>
+    <div class="circuit-pattern top-right"></div>
+    <div class="circuit-pattern mid-left"></div>
+    <div class="circuit-pattern bottom-left"></div>
+    <div class="robot-arm top-right"></div>
+    <div class="robot-arm bottom-left"></div>
+    
+    <!-- Particles -->
+    <div id="particles-container"></div>
+  </div>
+
+  <div class="container">
+    <main class="main-content">
+      <div class="text-center">
+        <div class="badge">AI Knowledge Assistant</div>
+        
+        <h1 class="heading">Chat with your Knowledge Base</h1>
+        
+        <p class="description">
+          Upload documents and ask questions about your content using advanced AI. 
+          Get instant insights and answers from your data.
+        </p>
+        
+        <div class="buttons">
+          <button class="btn-primary" id="upload-btn">Upload Documents</button>
+          <button class="btn-secondary">Learn More</button>
+        </div>
+      </div>
+    </main>
+    
+    <!-- Chat Interface -->
+    <div class="chat-interface">
+      <button class="chat-toggle" id="chat-toggle">
+        <span class="toggle-icon" id="toggle-icon">▲</span>
+      </button>
+      
+      <div class="chat-panel" id="chat-panel">
+        <!-- Chat Header -->
+        <div class="chat-header">
+          <div class="header-left">
+            <div class="avatar">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-brain">
+                <path d="M9.5 2a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Z"></path>
+                <path d="M14.5 2a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Z"></path>
+                <path d="M3 7.5c0-1.5 1.5-3 3-3"></path>
+                <path d="M18 4.5c1.5 0 3 1.5 3 3"></path>
+                <path d="M9.5 10a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Z"></path>
+                <path d="M14.5 10a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Z"></path>
+                <path d="M3 13.5c0 1.5 1.5 3 3 3"></path>
+                <path d="M18 16.5c1.5 0 3-1.5 3-3"></path>
+                <path d="M3 7.5v6"></path>
+                <path d="M21 7.5v6"></path>
+                <path d="M12 7v3"></path>
+                <path d="M12 15v4"></path>
+              </svg>
+            </div>
+            <div>
+              <h2>Knowledge Assistant</h2>
+              <div class="status">
+                <span class="status-dot"></span>
+                <span class="status-text">Active now</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="header-actions">
+            <button class="header-btn" id="minimize-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                <path d="M5 12h14"></path>
+              </svg>
+            </button>
+            <button class="header-btn" id="close-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                <path d="M18 6 6 18"></path>
+                <path d="m6 6 12 12"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Chat Messages -->
+        <div class="chat-messages" id="chat-messages">
+          <!-- Bot message will be added by JavaScript -->
+        </div>
+        
+        <!-- Chat Input -->
+        <div class="chat-input">
+          <button class="attachment-btn" id="attachment-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+              <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+            </svg>
+            <input type="file" id="file-input" multiple hidden>
+          </button>
+          
+          <div class="message-input-container">
+            <input type="text" id="message-input" placeholder="Type your message...">
+            <button id="send-button" class="send-button" disabled>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                <path d="m22 2-7 20-4-9-9-4Z"></path>
+                <path d="M22 2 11 13"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Create particles
+    function createParticles() {
+      const container = document.getElementById('particles-container');
+      const count = window.innerWidth < 768 ? 10 : 25;
+      
+      for (let i = 0; i < count; i++) {
+        const size = Math.random() * 3 + 2;
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.top = `${Math.random() * 100}%`;
+        particle.style.opacity = `${Math.random() * 0.3 + 0.1}`;
+        particle.style.animationDuration = `${Math.random() * 10 + 10}s`;
+        particle.style.animationDelay = `${Math.random() * 5}s`;
+        container.appendChild(particle);
+      }
+    }
+    
+    // Initialize chat
+    document.addEventListener('DOMContentLoaded', function() {
+      // Create particles
+      createParticles();
+      
+      // DOM elements
+      const chatPanel = document.getElementById('chat-panel');
+      const chatToggle = document.getElementById('chat-toggle');
+      const toggleIcon = document.getElementById('toggle-icon');
+      const messageInput = document.getElementById('message-input');
+      const sendButton = document.getElementById('send-button');
+      const messagesContainer = document.getElementById('chat-messages');
+      const fileInput = document.getElementById('file-input');
+      const attachmentBtn = document.getElementById('attachment-btn');
+      const minimizeBtn = document.getElementById('minimize-btn');
+      const closeBtn = document.getElementById('close-btn');
+      const uploadBtn = document.getElementById('upload-btn');
+      
+      // Chat state
+      let isExpanded = true;
+      
+      // Add initial message
+      addMessage('bot', "Hello! I'm your AI knowledge assistant. You can ask me questions or upload documents for me to analyze.");
+      
+      // Upload button in main section
+      uploadBtn.addEventListener('click', () => {
+        fileInput.click();
+      });
+      
+      // Toggle chat expansion
+      chatToggle.addEventListener('click', () => {
+        isExpanded = !isExpanded;
+        chatPanel.classList.toggle('collapsed', !isExpanded);
+        toggleIcon.textContent = isExpanded ? '▲' : '▼';
+      });
+      
+      // Minimize button
+      minimizeBtn.addEventListener('click', () => {
+        isExpanded = false;
+        chatPanel.classList.add('collapsed');
+        toggleIcon.textContent = '▼';
+      });
+      
+      // Close button
+      closeBtn.addEventListener('click', () => {
+        chatPanel.classList.add('hidden');
+        setTimeout(() => {
+          chatPanel.classList.remove('hidden');
+          chatPanel.classList.add('collapsed');
+          isExpanded = false;
+          toggleIcon.textContent = '▼';
+        }, 500);
+      });
+      
+      // Enable/disable send button based on input
+      messageInput.addEventListener('input', () => {
+        sendButton.disabled = messageInput.value.trim() === '';
+        sendButton.classList.toggle('active', messageInput.value.trim() !== '');
+      });
+      
+      // Send message on Enter key
+      messageInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && messageInput.value.trim() !== '') {
+          sendMessage();
+        }
+      });
+      
+      // Send message on button click
+      sendButton.addEventListener('click', sendMessage);
+      
+      // File upload
+      attachmentBtn.addEventListener('click', () => {
+        fileInput.click();
+      });
+      
+      fileInput.addEventListener('change', async (e) => {
+        if (e.target.files.length > 0) {
+          const files = e.target.files;
+          const fileNames = Array.from(files).map(file => file.name).join(', ');
+          addMessage('user', `📎 Uploaded: ${fileNames}`);
+          
+          // Show typing indicator
+          const typingIndicator = document.createElement('div');
+          typingIndicator.className = 'typing-indicator';
+          typingIndicator.innerHTML = `
+              <div class="dot"></div>
+              <div class="dot"></div>
+              <div class="dot"></div>
+          `;
+          messagesContainer.appendChild(typingIndicator);
+          scrollToBottom();
+          
+          // Upload files to server
+          const formData = new FormData();
+          for (let file of files) {
+              formData.append('file', file);
+          }
+          
+          try {
+              const response = await fetch('/upload', {
+                  method: 'POST',
+                  body: formData
+              });
+              
+              // Remove typing indicator
+              typingIndicator.remove();
+              
+              if (!response.ok) {
+                  throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
+              }
+              
+              const result = await response.json();
+              if (result.error) {
+                  addMessage('bot', `Error: ${result.error}`);
+              } else {
+                  addMessage('bot', `I've processed your documents (${result.chunks_processed} chunks extracted). You can now ask questions about them.`);
+              }
+          } catch (error) {
+              // Remove typing indicator if still present
+              if (typingIndicator.parentNode) {
+                  typingIndicator.remove();
+              }
+              console.error('Error:', error);
+              addMessage('bot', 'There was an error processing your files. Please try again.');
+          }
+          
+          // Clear the input
+          e.target.value = '';
+        }
+      });
+      
+      // Send message function
+      async function sendMessage() {
+        const message = messageInput.value.trim();
+        if (!message) return;
+        
+        // Add user message
+        addMessage('user', message);
+        
+        // Clear input
+        messageInput.value = '';
+        sendButton.disabled = true;
+        sendButton.classList.remove('active');
+        
+        // Show typing indicator
+        const typingIndicator = document.createElement('div');
+        typingIndicator.className = 'typing-indicator';
+        typingIndicator.innerHTML = `
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        `;
+        messagesContainer.appendChild(typingIndicator);
+        scrollToBottom();
+        
+        try {
+            // Send to server
+            const response = await fetch('/query', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    question: message
+                })
+            });
+            
+            // Remove typing indicator
+            typingIndicator.remove();
+            
+            if (!response.ok) {
+                throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
+            }
+            
+            const result = await response.json();
+            if (result.error) {
+                addMessage('bot', `Error: ${result.error}`);
+            } else {
+                addMessage('bot', result.response);
+            }
+        } catch (error) {
+            // Remove typing indicator if still present
+            if (typingIndicator.parentNode) {
+                typingIndicator.remove();
+            }
+            
+            console.error('Error:', error);
+            addMessage('bot', 'Sorry, I encountered an error while processing your request. Please check if the server is running.');
+        }
+      }
+      
+      // Add message to chat
+      function addMessage(type, content) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${type}-message`;
+        
+        // Create avatar
+        const avatar = document.createElement('div');
+        avatar.className = 'message-avatar';
+        
+        // Add appropriate icon based on message type
+        if (type === 'bot') {
+          avatar.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+              <path d="M12 8V4H8"></path>
+              <rect width="16" height="12" x="4" y="8" rx="2"></rect>
+              <path d="M2 14h2"></path>
+              <path d="M20 14h2"></path>
+              <path d="M15 13v2"></path>
+              <path d="M9 13v2"></path>
+            </svg>
+          `;
+        } else {
+          avatar.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          `;
+        }
+        
+        // Create content wrapper
+        const contentWrapper = document.createElement('div');
+        contentWrapper.className = 'message-content-wrapper';
+        
+        // Create bubble
+        const bubble = document.createElement('div');
+        bubble.className = 'message-bubble';
+        bubble.innerHTML = content;
+        
+        // Create timestamp
+        const timestamp = document.createElement('div');
+        timestamp.className = 'message-timestamp';
+        timestamp.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
+        // Assemble message
+        contentWrapper.appendChild(bubble);
+        contentWrapper.appendChild(timestamp);
+        
+        if (type === 'bot') {
+          messageDiv.appendChild(avatar);
+          messageDiv.appendChild(contentWrapper);
+        } else {
+          messageDiv.appendChild(contentWrapper);
+          messageDiv.appendChild(avatar);
+        }
+        
+        messagesContainer.appendChild(messageDiv);
+        
+        // Scroll to bottom
+        scrollToBottom();
+      }
+      
+      function scrollToBottom() {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      }
+    });
+  </script>
+</body>
+</html>
